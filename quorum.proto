@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package quorum;
+
+// Registry
+
+message Replica {
+    string ip = 1;
+    int32 port = 2;
+}
+
+message ReplicaList {
+    repeated Replica replicas = 1;
+}
+
+message RegisterResponse {
+    string status = 1;
+    int32 count = 2;
+}
+
+message Empty {}
+
+service Registry {
+    rpc RegisterReplica(Replica) returns (RegisterResponse);
+    rpc GetReadReplicas(Empty) returns (ReplicaList);
+    rpc GetWriteReplicas(Empty) returns (ReplicaList);
+    rpc GetAllReplicas(Empty) returns (ReplicaList);
+}
+
+// Replica Service
+
+message WriteRequest {
+    string uuid = 1;
+    string filename = 2;
+    string content = 3;
+}
+
+message WriteResponse {
+    string uuid = 1;
+    float timestamp = 2;
+    string status = 3;
+}
+
+message ReadRequest {
+    string uuid = 1;
+}
+
+message ReadResponse {
+    string status = 1;
+    string filename = 2;
+    string content = 3;
+    float timestamp = 4;
+}
+
+message DeleteRequest {
+    string uuid = 1;
+}
+
+message DeleteResponse {
+    string status = 1;
+}
+
+service Replica_Service {
+    rpc Write(WriteRequest) returns (WriteResponse);
+    rpc Read(ReadRequest) returns (ReadResponse);
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
+}
